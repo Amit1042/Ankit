@@ -1,0 +1,38 @@
+function assignNextClaimNumber() {
+                var pageUrl = window.location + "";
+                var url = _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/GetbyTitle('Insurance%20Claims')/Items?$select=Title,ID&$orderby=Title desc&$top=1";
+               
+                var lastID = '';
+               
+                $.ajax({
+                                url : url,
+                                type : "get",
+                                async: false,
+                                dataType: "json",
+                    success : function(data) {
+                               
+                                                if(data.value.length != 0) {
+                                                                lastID = data.value[0].Title;
+                                                }
+                    },
+                    error: function() {              
+                    }
+                });
+               
+                if(lastID) {
+                                if(lastID.indexOf("DSCL")) {
+                                                lastID = Number(lastID.substring(4));
+                                } else if (lastID.indexOf("SCL")) {
+                                                lastID = Number(lastID.substring(3));
+                                }
+                }
+                                               
+                var newNo = "SCL" + pad((Number(lastID) + 1), 10);
+                $("input[title='Claim Number Required Field']").val(newNo);
+}
+    
+function pad(n, width, z) {
+  z = z || '0';
+  n = n + '';
+  return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+  }
