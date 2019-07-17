@@ -1,0 +1,26 @@
+(Add this in script or content editor webpart)
+<script type="text/javascript">
+    var clientContext = null;
+    var web = null;
+    var list ;
+    ExecuteOrDelayUntilScriptLoaded(Initialize, "sp.js");
+    function Initialize()
+    {
+        clientContext = new SP.ClientContext.get_current();
+        web = clientContext.get_web();
+        list = web.get_lists().getByTitle("ListName");
+        clientContext.load(list);
+        clientContext.executeQueryAsync(Function.createDelegate(this, this.onListItemsLoadSuccess), 
+        Function.createDelegate(this, this.onQueryFailed));
+    }
+    function onListItemsLoadSuccess(sender, args) {
+       var count = list.get_itemCount();
+    alert(count); // This is just to test if count is coming correctly
+        $('#yourhtmlelement').text(count);
+
+    }
+
+    function onQueryFailed(sender, args) {
+        alert('request failed ' + args.get_message() + '\n' + args.get_stackTrace());
+    }
+</script>
